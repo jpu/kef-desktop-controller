@@ -157,7 +157,7 @@ export default class KefController {
     public async setVolume(volume: number): Promise<void> {
         if (!this.connected) await this.openConnection();
         if (this.connected) {
-            const msg = Buffer.from([0x53, 0x25, 0x81, `0x${volume.toString(16)}`, 0x1A]);
+            const msg = Buffer.from([0x53, 0x25, 0x81, parseInt(`0x${volume.toString(16)}`), 0x1A]);
             await this.promiseSocket.write(msg);
             await this.closeConnection();
         }
@@ -168,7 +168,13 @@ export default class KefController {
         if (!this.connected) await this.openConnection();
         if (this.connected) {
             const convertedDb = (db + 10) / 1 + 128;
-            const msg = Buffer.from([0x53, 0x2D, 0x81, `0x${convertedDb.toString(16)}`, 0x1A]);
+            const msg = Buffer.from([
+                0x53,
+                0x2D,
+                0x81,
+                parseInt(`0x${convertedDb.toString(16)}`),
+                0x1A
+            ]);
             await this.promiseSocket.write(msg);
             await this.closeConnection();
         }
@@ -179,7 +185,13 @@ export default class KefController {
         if (!this.connected) await this.openConnection();
         if (this.connected) {
             const convertedHz = (hz - 40) / 5 + 128;
-            const msg = Buffer.from([0x53, 0x2C, 0x81, `0x${convertedHz.toString(16)}`, 0x1A]);
+            const msg = Buffer.from([
+                0x53,
+                0x2C,
+                0x81,
+                parseInt(`0x${convertedHz.toString(16)}`),
+                0x1A
+            ]);
             await this.promiseSocket.write(msg);
             await this.closeConnection();
             await this.delay(200);
