@@ -76,7 +76,7 @@ module.exports = {
         "max-lines-per-function": [
             "error",
             {
-                max: 20,
+                max: 50,
                 skipBlankLines: true,
                 skipComments: true
             }
@@ -84,13 +84,14 @@ module.exports = {
         "max-nested-callbacks": ["error", 3],
         "new-parens": "error",
         "no-multi-assign": "error",
-        "no-trailing-spaces": [
-            "error",
-            {
-                skipBlankLines: true,
-                ignoreComments: true
-            }
-        ],
+        "no-trailing-spaces": "off",
+        // "no-trailing-spaces": [
+        //     "error",
+        //     {
+        //         skipBlankLines: true,
+        //         ignoreComments: true
+        //     }
+        // ],
         "object-curly-newline": ["error", { multiline: true }],
         "object-curly-spacing": ["error", "always"],
         "object-property-newline": "error",
