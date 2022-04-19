@@ -46,19 +46,19 @@ export default Vue.extend({
         IpInput
     },
     watch: {
-        view: function() {
-            this.fetchSpeakerData();
+        view: function(val) {
+            this.refreshData();
         }
     },
     data() {
         return {
             controller: {} as KefController,
-            inputSource: InputSource.Off as InputSource,
+            inputSource: InputSource.NotAvailable as InputSource,
             view: "playback" as "playback"|"dsp"|"settings",
             refreshInterval: null! as any
         };
     },
-    async  beforeDestroy() {
+    async beforeDestroy() {
         clearInterval(this.refreshInterval);
         this.refreshInterval = null;
         await this.controller.closeConnection();
@@ -67,11 +67,16 @@ export default Vue.extend({
         document.body.setAttribute("vs-theme", "dark");
         setTimeout(async () => {
             this.controller = new KefController();
-            this.fetchSpeakerData();
-            this.refreshInterval = setInterval(this.fetchSpeakerData, 10000);
+            this.fetchVolumeAndSourceData();
+            this.refreshInterval = setInterval(this.fetchVolumeAndSourceData, 6000);
         }, 200);
     },
+  
     methods: {
+        async refreshData() {
+            if (this.view === "dsp") this.fetchDspData();
+            else if (this.view === "playback") this.fetchVolumeAndSourceData();            
+        },
         async setMode() {
             await this.controller.setSource(this.inputSource);
         },
@@ -79,12 +84,16 @@ export default Vue.extend({
             await this.controller.turnOff();
             this.inputSource = InputSource.Off;
         },
-        async fetchSpeakerData() {
+        async fetchVolumeAndSourceData() {
             setTimeout(async () => {
                 this.inputSource = await this.controller.getSource();
+                (this.$refs.volume as HTMLFormElement).getVolume();
+            }, 200);
+        },
+        async fetchDspData() {
+            setTimeout(async () => {
                 await(this.$refs.sub as HTMLFormElement).getSubDb();
                 await(this.$refs.lowPass as HTMLFormElement).getSubHz();
-                (this.$refs.volume as HTMLFormElement).getVolume();
             }, 200);
         }
     }

@@ -31,12 +31,14 @@ export default Vue.extend({
         }
     },
     data() {
-        return { volume: 50 as number };
+        return { volume: "Syncing ..." };
     },
     methods: {
         async getVolume() {
-            if (this.controller)
-                this.volume = await this.controller.getVolume();
+            if (this.controller){
+                const volume = await this.controller.getVolume();
+                if (volume > -1) this.volume = volume;
+            }
         },
         async setVolume() {
             await this.controller.setVolume(this.volume);

@@ -65,7 +65,7 @@ export default Vue.extend({
         }
     },
     data() {
-        return { volume: 50 as number };
+        return { };
     },
     computed: {
         inputSource: {

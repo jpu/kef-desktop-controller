@@ -76,9 +76,7 @@ export default class KefController {
     }
 
     public async turnOff(): Promise<void> {
-        if (!this.connected) {
-            await this.openConnection();
-        }
+        if (!this.connected) await this.openConnection();
         if (this.connected) {
             const msg = Buffer.from([0x53, 0x30, 0x81, 0x9B, 0x0B]);
             await this.promiseSocket.write(msg);
@@ -88,66 +86,68 @@ export default class KefController {
     }
 
     public async getVolume(): Promise<number> {
-        if (!this.connected) {
-            await this.openConnection();
-        }
+        if (!this.connected) await this.openConnection();
         if (this.connected) {
             const msg = Buffer.from([0x47, 0x25, 0x80]);
             await this.promiseSocket.write(msg);
             const response = await this.promiseSocket.read(5);
-            const bufferArray = Array.prototype.slice.call(response, 0);
-            await this.closeConnection();
-            await this.delay(200);
-            if (bufferArray.length === 5) return bufferArray[3];
+            if (response){
+                const bufferArray = Array.prototype.slice.call(response, 0);
+                await this.closeConnection();
+                await this.delay(200);
+                if (bufferArray.length === 5) return bufferArray[3];
+            }
         }
         return -1;
     }
 
     public async getSubDb(): Promise<number> {
-        if (!this.connected) {
-            await this.openConnection();
-        }
+        if (!this.connected) await this.openConnection();
         if (this.connected) {
             const msg = Buffer.from([0x47, 0x2D, 0x80]);
             await this.promiseSocket.write(msg);
             const response = await this.promiseSocket.read(5);
-            const bufferArray = Array.prototype.slice.call(response, 0);
-            await this.closeConnection();
-            await this.delay(200);
-            if (bufferArray.length === 5) return (bufferArray[3] - 128) * 1 - 10;
+            if (response){
+                const bufferArray = Array.prototype.slice.call(response, 0);
+                await this.closeConnection();
+                await this.delay(200);
+                if (bufferArray.length === 5) return (bufferArray[3] - 128) * 1 - 10;
+            }
         }
         return -1;
     }
     public async getSubHz(): Promise<number> {
-        if (!this.connected) {
-            await this.openConnection();
-        }
+        if (!this.connected) await this.openConnection();
         if (this.connected) {
             const msg = Buffer.from([0x47, 0x2C, 0x80]);
             await this.promiseSocket.write(msg);
             const response = await this.promiseSocket.read(5);
-            const bufferArray = Array.prototype.slice.call(response, 0);
-            await this.closeConnection();
-            await this.delay(200);
-            if (bufferArray.length === 5) return (bufferArray[3] - 128) * 5 + 40;
+            if (response){
+                const bufferArray = Array.prototype.slice.call(response, 0);
+                await this.closeConnection();
+                await this.delay(200);
+                if (bufferArray.length === 5) return (bufferArray[3] - 128) * 5 + 40;
+            }
         }
         return -1;
     }
 
     public async getSource(): Promise<InputSource> {
-        if (!this.connected) {
-            await this.openConnection();
-        }
+        if (!this.connected) await this.openConnection();
         if (this.connected) {
             const msg = Buffer.from([0x47, 0x30, 0x80]);
             await this.promiseSocket.write(msg);
             const response = await this.promiseSocket.read(5);
-            const bufferArray = Array.prototype.slice.call(response, 0);
-            await this.closeConnection();
-            await this.delay(200);
-            if (bufferArray.length === 5) return this.convertMode(bufferArray[3]);
+            if (response){
+                const bufferArray = Array.prototype.slice.call(response, 0);
+                await this.closeConnection();
+                await this.delay(200);
+                if (bufferArray.length === 5) {
+                    return this.convertMode(bufferArray[3]);
+                }
+            }
         }
-        return InputSource.Off;
+        return InputSource.NotAvailable;
     }
 
     private convertMode(modeNumber: number): InputSource {
@@ -165,9 +165,7 @@ export default class KefController {
     }
 
     public async setVolume(volume: number): Promise<void> {
-        if (!this.connected) {
-            await this.openConnection();
-        }
+        if (!this.connected) await this.openConnection();
         if (this.connected) {
             const msg = Buffer.from([0x53, 0x25, 0x81, parseInt(`0x${volume.toString(16)}`), 0x1A]);
             await this.promiseSocket.write(msg);
@@ -177,9 +175,7 @@ export default class KefController {
     }
 
     public async setSubDb(db: number): Promise<void> {
-        if (!this.connected) {
-            await this.openConnection();
-        }
+        if (!this.connected) await this.openConnection();
         if (this.connected) {
             const convertedDb = (db + 10) / 1 + 128;
             const msg = Buffer.from([
@@ -196,9 +192,7 @@ export default class KefController {
     }
 
     public async setSubHz(hz: number): Promise<void> {
-        if (!this.connected) {
-            await this.openConnection();
-        }
+        if (!this.connected) await this.openConnection();
         if (this.connected) {
             const convertedHz = (hz - 40) / 5 + 128;
             const msg = Buffer.from([
@@ -217,9 +211,7 @@ export default class KefController {
 
 
     public async playPause(): Promise<void> {
-        if (!this.connected) {
-            await this.openConnection();
-        }
+        if (!this.connected) await this.openConnection();
         if (this.connected) {
             const msg = Buffer.from([0x53, 0x31, 0x81, 0x81]);
             await this.promiseSocket.write(msg);
@@ -229,9 +221,7 @@ export default class KefController {
     }
 
     public async nextTrack(): Promise<void> {
-        if (!this.connected) {
-            await this.openConnection();
-        }
+        if (!this.connected) await this.openConnection();
         if (this.connected) {
             const msg = Buffer.from([0x53, 0x31, 0x81, 0x82]);
             await this.promiseSocket.write(msg);
@@ -241,9 +231,7 @@ export default class KefController {
     }
 
     public async previousTrack(): Promise<void> {
-        if (!this.connected) {
-            await this.openConnection();
-        }
+        if (!this.connected) await this.openConnection();
         if (this.connected) {
             const msg = Buffer.from([0x53, 0x31, 0x81, 0x83]);
             await this.promiseSocket.write(msg);
