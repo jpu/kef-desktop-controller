@@ -25,7 +25,7 @@ function createWindow () { // eslint-disable-line
     win = new BrowserWindow({
         width: 450,
         height: 450,
-        resizable: false,
+        resizable: true,
         autoHideMenuBar: true,
         maximizable: false,
         webPreferences: {
